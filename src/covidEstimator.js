@@ -25,7 +25,8 @@ function estimator(data) {
       days = Math.trunc(timeToElapse) * 30;
       break;
     default:
-      days = Math.floor(timeToElapse);
+      days = Math.trunc(timeToElapse);
+      break;
   }
 
   const impact = function impactEstimator() {
