@@ -1,0 +1,52 @@
+<!-- Challenge 4, Building the UI  -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="App.css" />
+    <title>Covid Estimator</title>
+  </head>
+  <body>
+    <div class="container" style="background-color: whitesmoke; height: 100vh;">
+      <form class="form-container" id="inputForm">
+        <h3 class="text-primary">Covid-19 Estimator</h3>
+        <div class="form-group">
+          <label for="population"> Population: </label>
+          <input type="text" id="population" data-population />
+        </div>
+        <div class="form-group">
+          <label for="timeToElapse"> Time to Elapse: </label>
+          <input type="text" id="timeToElapse" data-time-to-elapse />
+        </div>
+        <div class="form-group">
+          <label for="reportedCases"> Reported Cases: </label>
+          <input type="text" id="reportedCases" data-reported-cases />
+        </div>
+        <div class="form-group">
+          <label for="totalHospitalBeds"> Number of Hospital Beds: </label>
+          <input type="text" id="hospitalBeds" data-total-hospital-beds />
+        </div>
+        <div class="form-group">
+          <label for="periodType"> Type of Period: </label>
+          <select id="periodType" data-period-type>
+            <option>days</option>
+            <option>weeks</option>
+            <option>months</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button
+            type="submit"
+            class="btn btn-block btn-primary"
+            data-go-estimate
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
