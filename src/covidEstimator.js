@@ -30,7 +30,7 @@ function estimator(data) {
 
   const impact = function impactEstimator() {
     // Challenge 1 Impact
-    const currentlyInfected = Math.floor(reportedCases * 10);
+    const currentlyInfected = Math.floor(reportedCases) * 10;
 
     const infectionsByRequestedTime = (function infectionsPerTime() {
       const exponent = Math.trunc(days / 3);
@@ -78,7 +78,7 @@ function estimator(data) {
 
   const severeImpact = function severeImpactEstimator() {
     // Challenge 1 Severe Impact
-    const currentlyInfected = Math.trunc(reportedCases * 50);
+    const currentlyInfected = Math.trunc(reportedCases) * 50;
 
     const infectionsByRequestedTime = (function infectionsPerTime() {
       const exponent = Math.trunc(days / 3);
