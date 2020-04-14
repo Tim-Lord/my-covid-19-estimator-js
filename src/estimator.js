@@ -1,143 +1,75 @@
-/* eslint-disable operator-linebreak */
-/* eslint-disable wrap-iife */
+const { getTimeInDays } = require('./helper');
+
+function hosBeds(avBed, container) {
+  return Math.trunc(avBed - container.severeCasesByRequestedTime);
+}
+
+function infections(container, factor) {
+  return container.currentlyInfected * 2 ** factor;
+}
+
+function severeCases(container) {
+  return Math.trunc(0.15 * container.infectionsByRequestedTime);
+}
+
+function vent(container) {
+  return Math.trunc(0.02 * container.infectionsByRequestedTime);
+}
+
+function icu(container) {
+  return Math.trunc(0.05 * container.infectionsByRequestedTime);
+}
+
+function dollarsInFlight(container, avgIncome, income, days) {
+  return +Math.trunc(
+    (container.infectionsByRequestedTime * avgIncome * income) / days
+  );
+}
+
+const computeCurrentlyInfected = (field, value) => field * value;
 
 const covid19ImpactEstimator = (data) => {
   const {
-    region,
-    periodType,
-    timeToElapse,
+    periodType: period,
+    timeToElapse: time,
     reportedCases,
-    totalHospitalBeds
+    totalHospitalBeds: beds,
+    region: { avgDailyIncomeInUSD: income, avgDailyIncomePopulation: avgIncome }
   } = data;
 
-  const { avgDailyIncomePopulation, avgDailyIncomeInUSD } = region;
+  const impact = {};
+  const severeImpact = {};
 
-  let days;
+  // Challenge 1
+  impact.currentlyInfected = computeCurrentlyInfected(reportedCases, 10);
+  severeImpact.currentlyInfected = computeCurrentlyInfected(reportedCases, 50);
 
-  switch (periodType) {
-    case 'days':
-      days = Math.trunc(timeToElapse);
-      break;
-    case 'weeks':
-      days = Math.trunc(timeToElapse) * 7;
-      break;
-    case 'months':
-      days = Math.trunc(timeToElapse) * 30;
-      break;
-    default:
-      days = Math.trunc(timeToElapse);
-      break;
-  }
+  const inDays = getTimeInDays(period, time);
+  const factor = Math.trunc(inDays / 3);
 
-  const impact = (function impactValue() {
-    /** Challenge 1 Impact */
-    // Currently Infected
-    const currentlyInfected = Math.trunc(reportedCases) * 10;
+  impact.infectionsByRequestedTime = infections(impact, factor);
+  severeImpact.infectionsByRequestedTime = infections(severeImpact, factor);
 
-    // Number of Infected people in a duration of time
-    const infectionsByRequestedTime = (function infectionPerTime() {
-      const exponent = Math.trunc(days / 3);
-      return Math.trunc(currentlyInfected * 2 ** exponent);
-    })();
+  // Challenge 2
+  impact.severeCasesByRequestedTime = severeCases(impact);
+  severeImpact.severeCasesByRequestedTime = severeCases(severeImpact);
 
-    /** Challenge 2 Impact */
-    // Severe Cases in a duration of time
-    const severeCasesByRequestedTime = Math.trunc(
-      0.15 * infectionsByRequestedTime
-    );
+  const avBed = 0.35 * beds;
+  impact.hospitalBedsByRequestedTime = hosBeds(avBed, impact);
+  severeImpact.hospitalBedsByRequestedTime = hosBeds(avBed, severeImpact);
 
-    // Number of Available Beds
-    const hospitalBedsByRequestedTime = (function availableBeds() {
-      const bedsAvailable = 0.35 * totalHospitalBeds;
-      return Math.trunc(bedsAvailable - severeCasesByRequestedTime);
-    })();
-
-    /** Challenge 3 Impact */
-    // Cases that require ICU
-    const casesForICUByRequestedTime = Math.trunc(
-      0.05 * infectionsByRequestedTime
-    );
-
-    // Cases that require Ventilators
-    const casesForVentilatorsByRequestedTime = Math.trunc(
-      0.02 * infectionsByRequestedTime
-    );
-
-    // Money Lost by the Economy Daily
-    const dollarsInFlight = Math.trunc(
-      Math.trunc(
-        infectionsByRequestedTime *
-          avgDailyIncomePopulation *
-          avgDailyIncomeInUSD
-      ) / days
-    );
-
-    return {
-      currentlyInfected,
-      infectionsByRequestedTime,
-      severeCasesByRequestedTime,
-      hospitalBedsByRequestedTime,
-      casesForICUByRequestedTime,
-      casesForVentilatorsByRequestedTime,
-      dollarsInFlight
-    };
-  })();
-
-  const severeImpact = (function severeImpactValue() {
-    /** Challenge 1 Severe Impact */
-    // Currently Infected
-    const currentlyInfected = Math.trunc(reportedCases) * 50;
-
-    // Number of Infected people in a duration of time
-    const infectionsByRequestedTime = (function infectionPerTime() {
-      const exponent = Math.trunc(days / 3);
-      return Math.trunc(currentlyInfected * 2 ** exponent);
-    })();
-
-    /** Challenge 2 Severe Impact */
-    // Severe Cases in a duration of time
-    const severeCasesByRequestedTime = Math.trunc(
-      0.15 * infectionsByRequestedTime
-    );
-
-    // Number of Available Beds
-    let hospitalBedsByRequestedTime = (function availableBeds() {
-      const bedsAvailable = 0.35 * totalHospitalBeds;
-      return Math.trunc(bedsAvailable - severeCasesByRequestedTime);
-    })();
-
-    hospitalBedsByRequestedTime = Math.trunc(hospitalBedsByRequestedTime);
-
-    /** Challenge 3 Severe Impact */
-    // Cases that require ICU
-    const casesForICUByRequestedTime = Math.trunc(
-      0.05 * infectionsByRequestedTime
-    );
-
-    // Cases that require Ventilators
-    const casesForVentilatorsByRequestedTime = Math.trunc(
-      0.02 * infectionsByRequestedTime
-    );
-
-    // Money Lost by the Economy Daily
-    const dollarsInFlight = Math.trunc(
-      Math.trunc(
-        infectionsByRequestedTime *
-          avgDailyIncomePopulation *
-          avgDailyIncomeInUSD
-      ) / days
-    );
-
-    return {
-      currentlyInfected,
-      infectionsByRequestedTime,
-      severeCasesByRequestedTime,
-      hospitalBedsByRequestedTime,
-      casesForICUByRequestedTime,
-      casesForVentilatorsByRequestedTime,
-      dollarsInFlight
-    };
-  })();
+  // Challenge 3
+  impact.casesForICUByRequestedTime = icu(impact);
+  severeImpact.casesForICUByRequestedTime = icu(severeImpact);
+  impact.casesForVentilatorsByRequestedTime = vent(impact);
+  severeImpact.casesForVentilatorsByRequestedTime = vent(severeImpact);
+  impact.dollarsInFlight = dollarsInFlight(impact, avgIncome, income, inDays);
+  severeImpact.dollarsInFlight = dollarsInFlight(
+    severeImpact,
+    avgIncome,
+    income,
+    inDays
+  );
 
   return {
     data,
