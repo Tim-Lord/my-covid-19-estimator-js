@@ -3,6 +3,15 @@
 /* eslint-disable wrap-iife */
 /* eslint-disable radix */
 /* eslint-disable object-curly-newline */
+
+const makeWholeNumber = (num) => {
+  const str = String(num);
+  if (str.indexOf('.') < 0) {
+    return Number(str);
+  }
+  return Number(str.slice(0, str.indexOf('.')));
+};
+
 function estimator(data) {
   const {
     region,
@@ -17,52 +26,52 @@ function estimator(data) {
 
   switch (periodType) {
     case 'days':
-      days = Math.trunc(timeToElapse);
+      days = makeWholeNumber(timeToElapse);
       break;
     case 'weeks':
-      days = Math.trunc(timeToElapse) * 7;
+      days = makeWholeNumber(timeToElapse) * 7;
       break;
     case 'months':
-      days = Math.trunc(timeToElapse) * 30;
+      days = makeWholeNumber(timeToElapse) * 30;
       break;
     default:
-      days = Math.trunc(timeToElapse);
+      days = makeWholeNumber(timeToElapse);
       break;
   }
 
   const impact = () => {
     // Challenge 1 Impact
-    const currentlyInfected = Math.floor(reportedCases) * 10;
+    const currentlyInfected = makeWholeNumber(reportedCases) * 10;
 
     let infectionsByRequestedTime = (function infectionsPerTime() {
-      const exponent = Math.trunc(days / 3);
+      const exponent = makeWholeNumber(days / 3);
       return currentlyInfected * 2 ** exponent;
     })();
 
-    infectionsByRequestedTime = Math.trunc(infectionsByRequestedTime);
+    infectionsByRequestedTime = makeWholeNumber(infectionsByRequestedTime);
 
     // Challenge 2 Impact
 
-    const severeCasesByRequestedTime = Math.trunc(
+    const severeCasesByRequestedTime = makeWholeNumber(
       0.15 * infectionsByRequestedTime
     );
 
     const hospitalBedsByRequestedTime = (function hospitalBeds() {
-      const bedsAvailable = Math.trunc(0.35 * totalHospitalBeds);
+      const bedsAvailable = makeWholeNumber(0.35 * totalHospitalBeds);
       return bedsAvailable - severeCasesByRequestedTime;
     })();
 
     // Challenge 3 Impact
 
-    const casesForICUByRequestedTime = Math.trunc(
+    const casesForICUByRequestedTime = makeWholeNumber(
       0.05 * infectionsByRequestedTime
     );
 
-    const casesForVentilatorsByRequestedTime = Math.trunc(
+    const casesForVentilatorsByRequestedTime = makeWholeNumber(
       0.02 * infectionsByRequestedTime
     );
 
-    const dollarsInFlight = Math.trunc(
+    const dollarsInFlight = makeWholeNumber(
       (infectionsByRequestedTime *
         avgDailyIncomePopulation *
         avgDailyIncomeInUSD) /
