@@ -16,13 +16,13 @@ function estimator(data) {
 
   switch (periodType) {
     case 'days':
-      days = Math.floor(timeToElapse);
+      days = Math.trunc(timeToElapse);
       break;
     case 'weeks':
-      days = Math.floor(timeToElapse * 7);
+      days = Math.trunc(timeToElapse) * 7;
       break;
     case 'months':
-      days = Math.floor(timeToElapse * 30);
+      days = Math.trunc(timeToElapse) * 30;
       break;
     default:
       days = Math.floor(timeToElapse);
@@ -33,32 +33,32 @@ function estimator(data) {
     const currentlyInfected = Math.floor(reportedCases * 10);
 
     const infectionsByRequestedTime = (function infectionsPerTime() {
-      const exponent = Math.floor(days / 3);
+      const exponent = Math.trunc(days / 3);
       return currentlyInfected * 2 ** exponent;
     })();
 
     // Challenge 2 Impact
 
-    const severeCasesByRequestedTime = Math.floor(
+    const severeCasesByRequestedTime = Math.trunc(
       0.15 * infectionsByRequestedTime
     );
 
     const hospitalBedsByRequestedTime = (function hospitalBeds() {
-      const bedsAvailable = Math.floor(0.35 * totalHospitalBeds);
+      const bedsAvailable = Math.trunc(0.35 * totalHospitalBeds);
       return bedsAvailable - severeCasesByRequestedTime;
     })();
 
     // Challenge 3 Impact
 
-    const casesForICUByRequestedTime = Math.floor(
+    const casesForICUByRequestedTime = Math.trunc(
       0.05 * infectionsByRequestedTime
     );
 
-    const casesForVentilatorsByRequestedTime = Math.floor(
+    const casesForVentilatorsByRequestedTime = Math.trunc(
       0.02 * infectionsByRequestedTime
     );
 
-    const dollarsInFlight = Math.floor(
+    const dollarsInFlight = Math.trunc(
       (infectionsByRequestedTime *
         avgDailyIncomePopulation *
         avgDailyIncomeInUSD) /
@@ -78,33 +78,33 @@ function estimator(data) {
 
   const severeImpact = function severeImpactEstimator() {
     // Challenge 1 Severe Impact
-    const currentlyInfected = Math.floor(reportedCases * 50);
+    const currentlyInfected = Math.trunc(reportedCases * 50);
 
     const infectionsByRequestedTime = (function infectionsPerTime() {
-      const exponent = Math.floor(days / 3);
+      const exponent = Math.trunc(days / 3);
       return currentlyInfected * 2 ** exponent;
     })();
 
     // Challenge 2 Severe Impact
-    const severeCasesByRequestedTime = Math.floor(
+    const severeCasesByRequestedTime = Math.trunc(
       0.15 * infectionsByRequestedTime
     );
 
     const hospitalBedsByRequestedTime = (function hospitalBeds() {
-      const bedsAvailable = Math.floor(0.35 * totalHospitalBeds);
+      const bedsAvailable = Math.trunc(0.35 * totalHospitalBeds);
       return bedsAvailable - severeCasesByRequestedTime;
     })();
 
     // Challenge 3 Severe Impact
-    const casesForICUByRequestedTime = Math.floor(
+    const casesForICUByRequestedTime = Math.trunc(
       0.05 * infectionsByRequestedTime
     );
 
-    const casesForVentilatorsByRequestedTime = Math.floor(
+    const casesForVentilatorsByRequestedTime = Math.trunc(
       0.02 * infectionsByRequestedTime
     );
 
-    const dollarsInFlight = Math.floor(
+    const dollarsInFlight = Math.trunc(
       (infectionsByRequestedTime *
         avgDailyIncomePopulation *
         avgDailyIncomeInUSD) /
