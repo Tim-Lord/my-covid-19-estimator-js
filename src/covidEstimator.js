@@ -16,16 +16,16 @@ function estimator(data) {
 
   switch (periodType) {
     case 'days':
-      days = timeToElapse;
+      days = parseInt(timeToElapse);
       break;
     case 'weeks':
-      days = timeToElapse * 7;
+      days = parseInt(timeToElapse * 7);
       break;
     case 'months':
-      days = timeToElapse * 30;
+      days = parseInt(timeToElapse * 30);
       break;
     default:
-      days = timeToElapse;
+      days = parseInt(timeToElapse);
   }
 
   const impact = function impactEstimator() {
