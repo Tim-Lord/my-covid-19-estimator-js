@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable operator-linebreak */
 /* eslint-disable wrap-iife */
 /* eslint-disable radix */
@@ -29,14 +30,16 @@ function estimator(data) {
       break;
   }
 
-  const impact = function impactEstimator() {
+  const impact = () => {
     // Challenge 1 Impact
     const currentlyInfected = Math.floor(reportedCases) * 10;
 
-    const infectionsByRequestedTime = (function infectionsPerTime() {
+    let infectionsByRequestedTime = (function infectionsPerTime() {
       const exponent = Math.trunc(days / 3);
       return currentlyInfected * 2 ** exponent;
     })();
+
+    infectionsByRequestedTime = Math.trunc(infectionsByRequestedTime);
 
     // Challenge 2 Impact
 
@@ -77,7 +80,7 @@ function estimator(data) {
     };
   };
 
-  const severeImpact = function severeImpactEstimator() {
+  const severeImpact = () => {
     // Challenge 1 Severe Impact
     const currentlyInfected = Math.trunc(reportedCases) * 50;
 
